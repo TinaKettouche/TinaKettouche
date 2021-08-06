@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Jeu du Serpent</title>
+        <script src="script.js"></script>
+
+    </head>
+    <body>
+
+    </body>
+</html>window.onload = function()
+{
+var canvas;
+var ctx;
+var delay= 100;
+//var blockSize= 30;
+//var x = 0;
+//var y =0;
+var snak;
+ 
+
+function init(){
+
+
+  canvas = document.createElement('canvas');
+  canvas.width= 900;
+  canvas.height= 600;
+  canvas.style.border= "1px solid";
+  document.body.appendChild(canvas);
+  ctx = canvas.getContext('2d');
+  snak= new Snake([[6,4], [5,4], [4,4]], "right");
+  refreshCanvas();
+  
+}
+
+
+function refreshCanvas(){
+
+  //x +=5; 
+  //y += 5; 
+  
+ ctx.clearRect(0, 0, canvas.width, canvas.height);
+ // ctx.fillStyle= "#ff0000";
+  //ctx.fillRect(x, y, 100, 50);
+  snak.advance();
+  snak.draw();
+  setTimeout(refreshCanvas, delay);
+  
+
+}
+
+function Snake(body, direction)
+{
+ this.body= body;
+ this.direction= direction;
+ this.draw= function(){
+ctx.save();
+ctx.fillStyle="#ff0000";
+for(var i=0; i<this.body.length; i++){
+  drawBlock(ctx, this.body[i]);
+
+}
+ctx.restore();
+ };
+
+
+
+this.advance= function (){
+
+var nextPos= this.body[0].slice();
+switch(this.direction){
+  case"left":
+      nextPos[0] -= 1;
+    break;
+  case"right":
+      nextPos[0] += 1;
+    break;
+  case"up":
+      nextPos[1] -= 1;
+    break;
+  case"down":
+      nextPos[1] += 1;
+    break;
+}
+this.body.unshift(nextPos);
+this.body.pop();
+};
+this.setDirection= function(newDirection){
+  var allowedDirection;
+  switch(this.direction){
+    case "left":
+    case"right":
+      allowedDirection= ["up", "down"];
+      break;
+    case "down":
+    case "up":
+      allowedDirection=["left","right"];
+        break;
+    default:
+       throw("invalid direction");
+  }
+  if(allowedDirection.indexOf(newDirection)> -1){
+    this.direction= newDirection;
+  }
+};
+
+
+}
+function drawBlock(ctx, position){
+  var x= position[0]* 30;
+  var y= position[1]*30;
+  ctx.fillRect(x, y, 30, 30);
+}
+
+document.onkeydown = function handleKeyDown(e){
+  var key = e.code;
+  var newDirection;
+  switch(key){
+    case 37:
+      newDirection= "left";
+      break;
+    case 38:
+      newDirection="up";
+        break;
+    case 39:
+      newDirection="right";
+          break;  
+    case 40:
+      newDirection="down";
+            break;   
+    default: return ;    
+  }
+  snak.setDirection(newDirection);
+}
+
+
+
+
+init();
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
